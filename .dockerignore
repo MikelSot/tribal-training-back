@@ -1,0 +1,11 @@
+*.log
+*.test
+*.md
+.idea
+.git
+.data
+.gitignore
+*.exe
+docker-compose.yml
+Dockerfile
+README.md
