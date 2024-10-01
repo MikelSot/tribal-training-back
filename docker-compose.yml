@@ -1,4 +1,18 @@
 services:
+  database:
+    image: postgres:11.9-alpine
+    container_name: tribal-db
+    restart: always
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+    ports:
+      - "5432:5432"
+    volumes:
+      - '.data/tribal:/var/lib/postgresql/data'
+      - './bootstrap/init.sql:/docker-entrypoint-initdb.d/init.sql'
+
   songs-cache:
     image: redis:latest
     container_name: songs-cache
