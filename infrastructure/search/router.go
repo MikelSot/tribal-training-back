@@ -3,6 +3,7 @@ package search
 import (
 	"github.com/gofiber/fiber/v2"
 
+	tribalAuth "github.com/MikelSot/tribal-training-auth/bootstrap"
 	"github.com/MikelSot/tribal-training-back/model"
 )
 
@@ -13,8 +14,7 @@ const (
 func NewRouter(spec model.Config) {
 	handler := buildHandler(spec)
 
-	// add middleware auth
-	privateRoutes(spec.Api, handler)
+	privateRoutes(spec.Api, handler, tribalAuth.ValidateJWT)
 }
 
 func buildHandler(spec model.Config) handler {

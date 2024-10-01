@@ -57,7 +57,7 @@ func getAllowMethods() string {
 }
 
 func getProxyRouteSearch() string {
-	proxyRouteQR := os.Getenv("PROXY_ROUTE_QR")
+	proxyRouteQR := os.Getenv("PROXY_ROUTE_SEARCH")
 	if proxyRouteQR == "" {
 		log.Warn("proxy route qr not found")
 

@@ -18,6 +18,9 @@ func newHandler(proxyRouterAuth string) handler {
 
 func (h handler) Proxy(c *fiber.Ctx) error {
 	url := fmt.Sprintf("%s%s", h.proxyRouterAuth, c.OriginalURL())
+	log.Warn("alsndclsjnd")
+	log.Warn(url)
+
 	if err := proxy.Do(c, url); err != nil {
 		log.Warn("¡Uy! Fallo al enviar la solicitud a la API Auth: ", err.Error())
 

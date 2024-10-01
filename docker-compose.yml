@@ -1,5 +1,5 @@
 services:
-  database:
+  training-database:
     image: postgres:11.9-alpine
     container_name: tribal-db
     restart: always
@@ -7,22 +7,64 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
+    networks:
+        - tribal-training-net-gateway
     ports:
       - "5432:5432"
     volumes:
       - '.data/tribal:/var/lib/postgresql/data'
-      - './bootstrap/init.sql:/docker-entrypoint-initdb.d/init.sql'
+      - '../tribal-training-auth/bootstrap/init.sql:/docker-entrypoint-initdb.d/init.sql'
 
-  songs-cache:
+  training-songs-cache:
     image: redis:latest
-    container_name: songs-cache
+    container_name: training-songs-cache
     restart: always
     command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ]
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+        - tribal-training-net-gateway
     ports:
-      - "${REDIS_PORT}:6379"
+      - ${REDIS_PORT}:6379
 
+  training-auth:
+    build:
+      context: ../tribal-training-auth
+    container_name: tribal-training-auth
+    networks:
+      - tribal-training-net-gateway
+    ports:
+      - ${PORT_AUTH}:${PORT_AUTH}
+    depends_on:
+      - training-database
 
+  training-search:
+    build:
+      context: ../tribal-training-search
+    container_name: tribal-training-search
+    networks:
+      - tribal-training-net-gateway
+    ports:
+      - ${PORT_SEARCH}:${PORT_SEARCH}
+    depends_on:
+      - training-auth
+      - training-songs-cache
 
+  training-gateway:
+    container_name: training-gateway
+    build:
+      context: .
+    networks:
+      - tribal-training-net-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - training-search
+      - training-auth
+      - training-songs-cache
+      - training-database
+
+networks:
+  tribal-training-net-gateway:
+    name: tribal-training-gateway
 
