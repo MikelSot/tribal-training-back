@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: Training backend Tribal
+  version: 1.0.0
+  description: API API que centralice servicios de búsqueda de canciones (iTunes, ChartLyrics), permitiendo que un cliente consulte un solo endpoint para obtener resultados basados en criterios como nombre, artista o álbum
+servers:
+  - url: http://localhost:8080
+paths:
+  /auth/api/v1/login:
+    post:
+      summary: Iniciar sesión
+      description: Inicia sesión en la aplicación
+      tags:
+        - Autenticación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: admin@admin
+                  description: Correo electrónico del usuario
+                password:
+                  type: string
+                  example: admin
+                  description: Contraseña del usuario
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                        description: ID del usuario
+                      first_name:
+                        type: string
+                        example: Juan
+                        description: Nombre del usuario
+                      last_name:
+                        type: string
+                        example: Pérez
+                        description: Apellido del usuario
+                      email:
+                        type: string
+                        example: admin@admin
+                        description: Correo electrónico del usuario
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: "2024-10-01T20:15:58.919718Z"
+                        description: Fecha de creación del usuario
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: "0001-01-01T00:00:00Z"
+                        description: Fecha de actualización del usuario
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    description: Token de autenticación
+
+  /search:
+    get:
+      summary: Busca música por artista, canción o album
+      description: Devuelve una lista de canciones que coinciden con el nombre del artista, de la canción o de album.
+      parameters:
+        - in: query
+          name: artist
+          schema:
+            type: string
+          description: El nombre del artista a buscar.
+        - in: query
+          name: album
+          schema:
+            type: string
+          description: El nombre del album a buscar.
+        - in: query
+          name: song
+          required: true
+          schema:
+            type: string
+          description: El nombre de la canción a buscar.
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Token para autenticación.
+      responses:
+        '200':
+          description: Lista de canciones que coinciden con los criterios de búsqueda.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      description: El identificador único de la canción.
+                    name:
+                      type: string
+                      description: El nombre de la canción.
+                    artist:
+                      type: string
+                      description:  El nombre del artista.
+                    duration:
+                      type: string
+                      description: La duración de la canción en milisegundos.
+                    album:
+                      type: string
+                      description: El nombre del álbum.
+                    artwork:
+                      type: string
+                      format: uri
+                      description: URL del álbum.
+                    price:
+                      type: number
+                      format: float
+                      description:  El precio de la canción.
+                    origin:
+                      type: string
+                      description: La fuente de la canción (por ejemplo, iTunes).
+        '500':
+          description: Error interno del servidor. Algo salió mal en el servidor.

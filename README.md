@@ -20,7 +20,15 @@ y por ultimo `iTunes` y `ChartLyrics` son servicios externos que se utilizan par
 
 ![Diagrama de secuencia](./assets/diagrama_secuencia.png)
 
-## 🎯  Estructura de los microservicios
+## 📚 Lista de operaciones
+
+| Metodo | Path                 | Descripcion                                           | Destino |
+|:-------|----------------------|-------------------------------------------------------|---------|
+| POST   | auth/api/v1/login    | Inicio de sesion de usuario                           | auth    |
+| POST   | auth/api/v1/register | Registra un nuevo usuario                             | auth    |
+| GET    | /search              | Permite buscar canciones por nombre, artista o álbum. | search  |
+
+## 📦  Estructura de los microservicios
 
 La arquitectura usada en los servicios es hexagonal, también conocida como "Arquitectura de Puertos y Adaptadores", se organiza en torno a una estructura central (núcleo) rodeada por adaptadores que se comunican con el mundo exterior. 
 En este proyecto, se identifican las siguientes capas:
@@ -70,12 +78,60 @@ En el codigo de esta arquitectura se aplican buenas practicas como los principio
     ├── .env.example    
     └── main.go  
 ```
-
 ---
 
 ## 💻 Installation
 
+1. **Instalación de herramientas Básicas**
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+2. **Clonación de repositorios de los servicios**
+   ```bash
+   git clone https://github.com/MikelSot/tribal-training-back.git
+   git clone https://github.com/MikelSot/tribal-training-auth.git
+   git clone https://github.com/MikelSot/tribal-training-search.git
+   ```
+
+3. **Configuración de variables de entorno**
+   
+   En cada carpeta de los servicios se encuentra un archivo `.env.example` que contiene las variables de entorno necesarias para el correcto funcionamiento de los servicios, 
+     se debe copiar este archivo y renombrarlo a `.env` y configurar las variables de entorno necesarias.
+
+## 🚀 Deployment
+
+Se uso docker compose para gestionar los contenedores(Dockerfile) de cada aplicación o servicio, se usaron redes para la comunicación entre contenedores y volúmenes para la persistencia de la data en conjunto con la base de datos.
+
+Para levantar los servicios se debe ejecutar el siguiente comando en la raiz del proyecto:
+
+```bash
+  docker-compose up -d
+```
+
+Este comando hará lo siguiente:
+
+- Construirá las imágenes Docker para los servicios de autenticación, búsqueda y el API Gateway.
+- Levantará los contenedores de PostgreSQL, Redis, autenticación, búsqueda y el API Gateway.
+- Creará una red de Docker para la comunicación entre los contenedores.
+- Creará volúmenes de Docker para la persistencia de la data en PostgreSQL y Redis.
+- Expondrá los puertos necesarios para acceder a los servicios.
+- Levantará los servicios en segundo plano.
+
+
+
 ## 🧙 Endpoints
+
+La documentacion de los endpoints se encuentran en el archivo `.tribal`, en el archivo `openapi.yaml` 
+esta documentacion se encuentra escrita en formato **OpenAPI**, para lo cual se requiere que tenga instalado en su 
+editor una extension que le permita visualizar este tipo de archivos, en vscode puede instalar la extension `Swagger Viewer`.
+
+En este archivo se encuentran los endpoints de la aplicacion, los metodos que aceptan, los parametros que reciben y los codigos de respuesta.
+
+Acontinuacion se muestra un ejemplo de como se debe visualizar la documentacion de los endpoints.
+
+
+![Open API](assets/openapi.png)
 
 ---
 
